@@ -72,7 +72,7 @@ def processApps(apps):
 		session.ehlo()
 		session.starttls()
 		session.ehlo()
-		session.login(sender,'AIESEC123')
+		session.login(sender,<your pass>)
 
 		for ap in apps:
 			headersx={'access_token': token
@@ -197,9 +197,13 @@ def setManagerOp(manager_id, op):
 #
 #this call makes the whole notification deal happen
 #uncoment to excecute notifications 
-appNotificacion()	
+#the main method
+def main():
+	appNotificacion()	
 
-
+# ejecucion 
+if __name__ == "__main__":
+	main()
 
 
 
