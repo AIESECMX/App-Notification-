@@ -81,7 +81,7 @@ def processApps(apps,gt = False):
 				op = None
 			else:
 				op = json.loads(op_r.text)
-				#setManagerOp(manager_id =config.EXPA_USER_ID ,op = op)
+				
 
 			#getting the Ep info
 			
@@ -176,7 +176,7 @@ def sendMail(session,app):
 	msg['Subject'] = '[AIESEC]New Application in EXPA {}({})-> {}({})'.format(unicode(app.ep_name).encode('utf-8'),app.ep_link,app.op_name.encode('utf-8'),app.op_link).encode('utf-8')
 	
 	try:
-		#session.sendmail(sender,receivers,msg.as_string().encode('utf-8'))
+		session.sendmail(sender,receivers,msg.as_string().encode('utf-8'))
 		print app.country 
 		if app.country != 'Mexico': #for all the opportunities that are not from mexico, ie, mexican EPs
 			sendEPMail(session,app)
@@ -187,8 +187,8 @@ def sendMail(session,app):
 def sendEPMail(session,app):
 	#self,ep_link,ep_mail,ep_name,op_name,op_link,cv_link,ep_managers,op_managers,app_link)
 	#the lists for the mail involved with this app
-	#receivers = [app.ep_mail]
-	receivers = ['esuarez@aiesec.org.mx']
+	receivers = [app.ep_mail]
+	
 	to_epm =""
 	to_opm =""
 	# the reciever is the ep manager
@@ -201,18 +201,6 @@ def sendEPMail(session,app):
 		if (manager['email'] not in  ['josem.martinezm@aiesec.net','noreply@aiesec.org.mx','dev.mexico@ai.aiesec.org']):
 			to_opm+=manager["email"]+'<br>'
 	#msg['To'] = pay_data.ep_mail+','++',esuarez@aiesec.org.mx,jalanis@aiesec.org.mx' #pay_data.ep_mail
-	m = """<h3>There's a new application in expa that you are managing</h3>
-		EP name:	<a href='https://experience.aiesec.org/#/people/{}'>{} </a><br>
-		EP mail:	{}<br>
-		<a href='{}'>EP cv</a><br>
-		EP managers:	{} <br>
-		Opportunity:	<a href='https://experience.aiesec.org/#/opportunities/{}'>{}	</a><br>
-		Opportunity Managers:	{}	<br><br><br>
-		
-
-		<h4>Please follow up to deliver a great experience</h4>
-		""".format(app.ep_link , unicode(app.ep_name).encode('utf-8') , app.ep_mail , app.cv_link.encode('utf-8')  , to_epm , app.op_link,app.op_name.encode('utf-8') , to_opm ).encode('utf-8')
-
 
 	ep_m = 	mail_ep.replace('{opportunity_name}',app.op_name).replace('{opportunity_country}',app.country).replace('{ep_managers}',to_epm).replace('{opportunity_mnagers}',to_opm).replace('{opportunity_link}',
 		'https://opportunities.aiesec.org/opportunity/'+str(app.op_link))
@@ -227,21 +215,6 @@ def sendEPMail(session,app):
 	except smtplib.SMTPException as e:
 		#print e
 		return 
-#this method gets  the content of  an opportunity as a jason and a person id and sets the person as manager for that op
-def setManagerOp(manager_id, op):
-	managers = []
-
-	for m in op['managers']:
-		managers.append(str(m['id']))
-	#this means that the account is already a manager for this opp and nothing has to be done
-	if str(manager_id) in managers:
-		return
-
-	mans=', '.join(managers)+','+str(manager_id)
-	url = 'https://gis-api.aiesec.org/v2/opportunities/'+str(op['id'])+'.json?access_token='+token
-	data = '{"opportunity":{"manager_ids":['+mans+']}}'
-	requests.patch(url, data=data)	
-
 
 
 #
