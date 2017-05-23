@@ -1,3 +1,13 @@
+#The purpose of this script is to get a token for the operations with the 
+#AIESEC platform EXPA the methods here allow you to get e token for EXPA and for YOP
+#Author: Enriqe Suarez MCVP Data Intelligence AIESEC in Mexico
+#Version: 1.2
+#Last update: March 21, 2017s
+#
+#Usage :
+#simpple usage request ofr the method that will get the token either from EXPA dn YOP with
+#User mail and password as parameters and will get the the plain text token as a return statetment
+#
 import urllib
 import urllib2
 import cookielib
@@ -63,7 +73,7 @@ class GIS:
         succes = False
         attempts = 0
         #asking to be redirected to YOP intead of EXPA
-        url='https://auth.aiesec.org/oauth/authorize?redirect_uri=https%3A%2F%2Fopportunities.aiesec.org%2Fauth&response_type=code&client_id=43e49fdc8581a196cafa9122c2e102aa22df72a0e8aa6d5a73f27afa56fe8890'
+        url='https://auth.aiesec.org/oauth/authorize?redirect_uri=https%3A%2F%2Fopportunities.aiesec.org%2Fauth&response_type=code&client_id=e34d5daf8c89172f7fabccbae8378eb3cb524cffc774c57afe2011b90d2e77e5'
         # create the request 
         req = urllib2.Request(url)
         #try 3 times
@@ -90,7 +100,8 @@ class GIS:
             token = None
             for cookie in self.cj:
                 if cookie.name == 'aiesec_token':
-                    token = json.loads(cookie.value)['token']['access_token']
+                    
+                    token = json.loads(urllib.unquote(cookie.value).decode('utf8'))['token']['access_token']
             if token is None:
                 raise Exception('Unable to generate a token for {0}!'.format(email))
             return token
