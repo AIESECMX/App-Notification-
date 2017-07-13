@@ -42,6 +42,7 @@ def appNotificacion( page = 1):
 	
 	r = requests.get("https://gis-api.aiesec.org/v2/applications.json", data=headers)
 	#print 'aplications '+str(r.status_code)
+	print r.text
 	message = json.loads(r.text)
 	apps = message['data']
 	#cuantas paginas de applicaciones hay que pedir
@@ -200,12 +201,11 @@ def sendEPMail(session,app):
 	for manager in app.op_managers:
 		if (manager['email'] not in  ['josem.martinezm@aiesec.net','noreply@aiesec.org.mx','dev.mexico@ai.aiesec.org']):
 			to_opm+=manager["email"]+'<br>'
-	#msg['To'] = pay_data.ep_mail+','++',esuarez@aiesec.org.mx,jalanis@aiesec.org.mx' #pay_data.ep_mail
 
 	ep_m = 	mail_ep.replace('{opportunity_name}',app.op_name).replace('{opportunity_country}',app.country).replace('{ep_managers}',to_epm).replace('{opportunity_mnagers}',to_opm).replace('{opportunity_link}',
 		'https://opportunities.aiesec.org/opportunity/'+str(app.op_link))
 	msg = MIMEText(unicode(ep_m).encode('utf-8'),'html')
-	
+	msg['To'] =  app.ep_mail	
 	msg['From'] = sender
 	msg['bcc'] = 'esuarez@aiesec.org.mx'
 	msg['Subject'] = '[AIESEC]¡Felicidades por aplicar!'
